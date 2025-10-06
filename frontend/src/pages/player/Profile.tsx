@@ -59,14 +59,18 @@ type PasswordFormData = z.infer<typeof passwordSchema>;
 
 interface PaymentMethod {
   id: string;
-  type: 'pix' | 'credit_card' | 'bank_account';
   name: string;
-  details: string;
-  isDefault: boolean;
+  type: 'credit_card' | 'debit_card' | 'pix' | 'bank_transfer';
+  enabled: boolean;
+  minAmount: number;
+  maxAmount: number;
+  fee: number;
+  details?: string;
+  isDefault?: boolean;
 }
 
 const Profile: React.FC = () => {
-  const { user, updateUser } = useAppStore();
+  const { user, setUser } = useAppStore();
   const [activeTab, setActiveTab] = useState<TabType>('profile');
   const [loading, setLoading] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
@@ -140,8 +144,8 @@ const Profile: React.FC = () => {
   const loadPaymentMethods = async () => {
     try {
       const response = await walletService.getPaymentMethods();
-      if (response.success && response.data) {
-        setPaymentMethods(response.data);
+      if (response) {
+        setPaymentMethods(response);
       }
     } catch (error) {
       console.error('Error loading payment methods:', error);
@@ -153,11 +157,9 @@ const Profile: React.FC = () => {
       setLoading(true);
       const response = await authService.updateProfile(data);
       
-      if (response.success && response.data) {
-        updateUser(response.data);
+      if (response) {
+        setUser(response);
         toast.success('Perfil atualizado com sucesso!');
-      } else {
-        toast.error(response.message || 'Erro ao atualizar perfil');
       }
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -170,17 +172,10 @@ const Profile: React.FC = () => {
   const handlePasswordSubmit = async (data: PasswordFormData) => {
     try {
       setLoading(true);
-      const response = await authService.changePassword({
-        currentPassword: data.currentPassword,
-        newPassword: data.newPassword
-      });
+      await authService.changePassword(data.currentPassword, data.newPassword);
       
-      if (response.success) {
-        toast.success('Senha alterada com sucesso!');
-        resetPassword();
-      } else {
-        toast.error(response.message || 'Erro ao alterar senha');
-      }
+      toast.success('Senha alterada com sucesso!');
+      resetPassword();
     } catch (error) {
       console.error('Error changing password:', error);
       toast.error('Erro ao alterar senha. Tente novamente.');
@@ -240,26 +235,26 @@ const Profile: React.FC = () => {
   };
 
   const renderProfile = () => (
-    <div className="space-y-6">
-      <form onSubmit={handleSubmitProfile(handleProfileSubmit)} className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
+      <form onSubmit={handleSubmitProfile(handleProfileSubmit)} className="space-y-4 sm:space-y-6">
         {/* Avatar Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-sm">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Foto do Perfil
           </h3>
-          <div className="flex items-center space-x-4">
-            <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-3 sm:space-y-0 sm:space-x-4">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xl sm:text-2xl font-bold flex-shrink-0">
               {user?.name?.charAt(0).toUpperCase() || 'U'}
             </div>
-            <div>
+            <div className="text-center sm:text-left">
               <button
                 type="button"
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center space-x-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
               >
-                <Camera size={16} />
+                <Camera size={14} />
                 <span>Alterar Foto</span>
               </button>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
                 JPG, PNG ou GIF. Máximo 2MB.
               </p>
             </div>
@@ -267,11 +262,11 @@ const Profile: React.FC = () => {
         </div>
         
         {/* Personal Information */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-sm">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Informações Pessoais
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Nome Completo
@@ -752,18 +747,18 @@ const Profile: React.FC = () => {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-        <div className="flex items-center space-x-3 mb-4">
-          <User className="text-blue-600 dark:text-blue-400" size={24} />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-sm">
+        <div className="flex items-center space-x-2 sm:space-x-3 mb-4">
+          <User className="text-blue-600 dark:text-blue-400" size={20} />
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
             Meu Perfil
           </h1>
         </div>
         
         {/* Tabs */}
-        <div className="flex space-x-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+        <div className="flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
           {[
             { id: 'profile', label: 'Perfil', icon: User },
             { id: 'security', label: 'Segurança', icon: Shield },
@@ -775,13 +770,13 @@ const Profile: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as TabType)}
-                className={`flex-1 flex items-center justify-center space-x-2 py-2 px-4 rounded-md transition-colors ${
+                className={`flex-1 flex items-center justify-center space-x-1 sm:space-x-2 py-2 px-2 sm:px-4 rounded-md transition-colors text-sm sm:text-base ${
                   activeTab === tab.id
                     ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm'
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                 }`}
               >
-                <Icon size={16} />
+                <Icon size={14} />
                 <span className="font-medium">{tab.label}</span>
               </button>
             );

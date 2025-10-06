@@ -50,7 +50,7 @@ const Login: React.FC = () => {
           navigate(ROUTES.DASHBOARD);
         }
       } else {
-        throw new Error(result.message || 'Erro ao fazer login');
+        throw new Error('Erro ao fazer login');
       }
     } catch (error: any) {
       // Handle specific error cases
@@ -67,14 +67,14 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-4 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-6">
         {/* Header */}
         <div className="text-center">
           <div className="mx-auto h-12 w-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
             <span className="text-white font-bold text-xl">J</span>
           </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
+          <h2 className="mt-6 text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
             Entrar na sua conta
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
@@ -89,7 +89,7 @@ const Login: React.FC = () => {
         </div>
 
         {/* Form */}
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+        <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
             {/* Email */}
             <div>
@@ -105,7 +105,7 @@ const Login: React.FC = () => {
                   type="email"
                   autoComplete="email"
                   className={`
-                    block w-full pl-10 pr-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                    block w-full pl-10 pr-3 py-2.5 sm:py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base
                     ${errors.email 
                       ? 'border-red-300 dark:border-red-600' 
                       : 'border-gray-300 dark:border-gray-600'
@@ -136,7 +136,7 @@ const Login: React.FC = () => {
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
                   className={`
-                    block w-full pl-10 pr-10 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                    block w-full pl-10 pr-10 py-2.5 sm:py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base
                     ${errors.password 
                       ? 'border-red-300 dark:border-red-600' 
                       : 'border-gray-300 dark:border-gray-600'
@@ -166,7 +166,7 @@ const Login: React.FC = () => {
           </div>
 
           {/* Remember me and Forgot password */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
             <div className="flex items-center">
               <input
                 {...register('rememberMe')}
@@ -193,7 +193,7 @@ const Login: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+              className="group relative w-full flex justify-center py-2.5 sm:py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
             >
               {isSubmitting ? (
                 <>
@@ -208,11 +208,11 @@ const Login: React.FC = () => {
         </form>
 
         {/* Demo credentials */}
-        <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-md">
+        <div className="mt-4 p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/20 rounded-md">
           <h3 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">
             Credenciais de demonstração:
           </h3>
-          <div className="text-xs text-blue-600 dark:text-blue-300 space-y-1">
+          <div className="text-xs sm:text-sm text-blue-600 dark:text-blue-300 space-y-1">
             <p><strong>Jogador:</strong> player@jbest.com / 123456</p>
             <p><strong>Admin:</strong> admin@jbest.com / 123456</p>
           </div>

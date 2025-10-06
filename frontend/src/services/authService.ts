@@ -108,7 +108,7 @@ export const authService = {
   getProfile: async (): Promise<User> => {
     try {
       const response = await apiClient.get<User>(API_ENDPOINTS.AUTH.PROFILE);
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
       throw new Error(error.message || 'Erro ao carregar perfil');
     }
@@ -127,7 +127,7 @@ export const authService = {
         localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(response.data));
       }
       
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
       throw new Error(error.message || 'Erro ao atualizar perfil');
     }

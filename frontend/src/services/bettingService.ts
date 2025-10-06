@@ -10,7 +10,7 @@ export const bettingService = {
         API_ENDPOINTS.BETTING.PLACE_BET,
         betData
       );
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
       throw new Error(error.message || 'Erro ao realizar aposta');
     }
@@ -26,7 +26,7 @@ export const bettingService = {
     try {
       const params = { page, limit, ...(status && { status }) };
       const response = await apiClient.get(API_ENDPOINTS.BETTING.HISTORY, params);
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
       throw new Error(error.message || 'Erro ao carregar histórico de apostas');
     }
@@ -36,7 +36,7 @@ export const bettingService = {
   getCurrentDraw: async (): Promise<Draw> => {
     try {
       const response = await apiClient.get<Draw>(API_ENDPOINTS.BETTING.CURRENT_DRAW);
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
       throw new Error(error.message || 'Erro ao carregar sorteio atual');
     }
@@ -52,7 +52,7 @@ export const bettingService = {
     try {
       const params = { page, limit, ...(drawId && { drawId }) };
       const response = await apiClient.get(API_ENDPOINTS.BETTING.RESULTS, params);
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
       throw new Error(error.message || 'Erro ao carregar resultados');
     }
@@ -64,7 +64,7 @@ export const bettingService = {
       const response = await apiClient.get<Bet>(
         `${API_ENDPOINTS.BETTING.PLACE_BET}/${betId}`
       );
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
       throw new Error(error.message || 'Erro ao carregar aposta');
     }
@@ -94,7 +94,7 @@ export const bettingService = {
         `${API_ENDPOINTS.BETTING.HISTORY}/stats`,
         { period }
       );
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
       throw new Error(error.message || 'Erro ao carregar estatísticas');
     }
@@ -112,7 +112,7 @@ export const bettingService = {
   }[]> => {
     try {
       const response = await apiClient.get('/betting/modalities');
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
       throw new Error(error.message || 'Erro ao carregar modalidades');
     }
@@ -128,7 +128,7 @@ export const bettingService = {
   }[]> => {
     try {
       const response = await apiClient.get('/betting/schedule');
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
       throw new Error(error.message || 'Erro ao carregar cronograma');
     }
@@ -145,7 +145,7 @@ export const bettingService = {
   }> => {
     try {
       const response = await apiClient.get(`/betting/live/${drawId}`);
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
       throw new Error(error.message || 'Erro ao carregar sorteio ao vivo');
     }
@@ -164,7 +164,7 @@ export const bettingService = {
   }> => {
     try {
       const response = await apiClient.get(`/betting/results/${drawId}`);
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
       throw new Error(error.message || 'Erro ao carregar números sorteados');
     }
@@ -180,7 +180,7 @@ export const bettingService = {
         modality,
         numbers
       });
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
       throw new Error(error.message || 'Erro ao validar números');
     }
@@ -198,7 +198,7 @@ export const bettingService = {
         modality,
         period
       });
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
       throw new Error(error.message || 'Erro ao carregar números populares');
     }

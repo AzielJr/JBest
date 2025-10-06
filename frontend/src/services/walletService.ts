@@ -6,8 +6,8 @@ export const walletService = {
   // Get wallet balance
   getBalance: async (): Promise<Wallet> => {
     try {
-      const response = await apiClient.get<Wallet>(API_ENDPOINTS.WALLET.BALANCE);
-      return response.data;
+      const response = await apiClient.get(API_ENDPOINTS.WALLET.BALANCE);
+      return response.data.data;
     } catch (error: any) {
       throw new Error(error.message || 'Erro ao carregar saldo');
     }
@@ -23,45 +23,43 @@ export const walletService = {
     try {
       const params = { page, limit, ...(type && { type }) };
       const response = await apiClient.get(API_ENDPOINTS.WALLET.TRANSACTIONS, params);
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
-      throw new Error(error.message || 'Erro ao carregar histórico');
+      throw new Error(error.message || 'Erro ao carregar transações');
     }
   },
   
   // Add funds to wallet
   deposit: async (amount: number, paymentMethod: string): Promise<Transaction> => {
     try {
-      const response = await apiClient.post<Transaction>(
-        API_ENDPOINTS.WALLET.DEPOSIT,
-        { amount, paymentMethod }
-      );
-      return response.data;
+      const response = await apiClient.post(API_ENDPOINTS.WALLET.DEPOSIT, {
+        amount,
+        paymentMethod
+      });
+      return response.data.data;
     } catch (error: any) {
-      throw new Error(error.message || 'Erro ao realizar depósito');
+      throw new Error(error.message || 'Erro ao processar depósito');
     }
   },
   
   // Withdraw funds from wallet
   withdraw: async (amount: number, bankAccount: any): Promise<Transaction> => {
     try {
-      const response = await apiClient.post<Transaction>(
-        API_ENDPOINTS.WALLET.WITHDRAW,
-        { amount, bankAccount }
-      );
-      return response.data;
+      const response = await apiClient.post(API_ENDPOINTS.WALLET.WITHDRAW, {
+        amount,
+        bankAccount
+      });
+      return response.data.data;
     } catch (error: any) {
-      throw new Error(error.message || 'Erro ao realizar saque');
+      throw new Error(error.message || 'Erro ao processar saque');
     }
   },
   
   // Get transaction by ID
   getTransaction: async (transactionId: string): Promise<Transaction> => {
     try {
-      const response = await apiClient.get<Transaction>(
-        `${API_ENDPOINTS.WALLET.TRANSACTIONS}/${transactionId}`
-      );
-      return response.data;
+      const response = await apiClient.get(`${API_ENDPOINTS.WALLET.TRANSACTIONS}/${transactionId}`);
+      return response.data.data;
     } catch (error: any) {
       throw new Error(error.message || 'Erro ao carregar transação');
     }
@@ -76,11 +74,8 @@ export const walletService = {
     netBalance: number;
   }> => {
     try {
-      const response = await apiClient.get(
-        `${API_ENDPOINTS.WALLET.BALANCE}/stats`,
-        { period }
-      );
-      return response.data;
+      const response = await apiClient.get(`${API_ENDPOINTS.WALLET.BALANCE}/stats`, { period });
+      return response.data.data;
     } catch (error: any) {
       throw new Error(error.message || 'Erro ao carregar estatísticas');
     }
@@ -97,8 +92,8 @@ export const walletService = {
     fee: number;
   }[]> => {
     try {
-      const response = await apiClient.get('/payment-methods');
-      return response.data;
+      const response = await apiClient.get('/payment/methods');
+      return response.data.data;
     } catch (error: any) {
       throw new Error(error.message || 'Erro ao carregar métodos de pagamento');
     }
@@ -113,9 +108,9 @@ export const walletService = {
   }> => {
     try {
       const response = await apiClient.post('/payment/pix', { amount });
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
-      throw new Error(error.message || 'Erro ao gerar PIX');
+      throw new Error(error.message || 'Erro ao criar pagamento PIX');
     }
   },
   
@@ -127,7 +122,7 @@ export const walletService = {
   }> => {
     try {
       const response = await apiClient.get(`/payment/pix/${transactionId}/status`);
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
       throw new Error(error.message || 'Erro ao verificar pagamento PIX');
     }
@@ -145,7 +140,7 @@ export const walletService = {
   }[]> => {
     try {
       const response = await apiClient.get('/wallet/bank-accounts');
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
       throw new Error(error.message || 'Erro ao carregar contas bancárias');
     }

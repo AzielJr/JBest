@@ -25,7 +25,7 @@ import { toast } from 'sonner';
 
 type TabType = 'overview' | 'deposit' | 'withdraw' | 'history';
 type PaymentMethod = 'pix' | 'credit_card' | 'bank_transfer';
-type TransactionFilter = 'all' | 'deposit' | 'withdrawal' | 'bet' | 'prize';
+type TransactionFilter = 'all' | 'deposito' | 'retirada' | 'aposta' | 'premio';
 
 const Wallet: React.FC = () => {
   const { user, wallet, updateWallet } = useAppStore();
@@ -53,8 +53,8 @@ const Wallet: React.FC = () => {
     totalDeposits: 0,
     totalWithdrawals: 0,
     totalBets: 0,
-    totalPrizes: 0,
-    monthlyBalance: 0
+    totalWinnings: 0,
+    netBalance: 0
   });
 
   useEffect(() => {
@@ -69,13 +69,13 @@ const Wallet: React.FC = () => {
   const loadWalletData = async () => {
     try {
       const response = await walletService.getBalance();
-      if (response.success && response.data) {
-        updateWallet(response.data);
+      if (response) {
+        updateWallet(response);
       }
       
-      const statsResponse = await walletService.getWalletStats();
-      if (statsResponse.success && statsResponse.data) {
-        setStats(statsResponse.data);
+      const statsResponse = await walletService.getStats();
+      if (statsResponse) {
+        setStats(statsResponse);
       }
     } catch (error) {
       console.error('Error loading wallet data:', error);
@@ -85,9 +85,9 @@ const Wallet: React.FC = () => {
   const loadTransactions = async () => {
     try {
       setLoading(true);
-      const response = await walletService.getTransactionHistory({ limit: 50 });
-      if (response.success && response.data) {
-        setTransactions(response.data.transactions);
+      const response = await walletService.getTransactions(1, 50);
+      if (response) {
+        setTransactions(response.transactions);
       }
     } catch (error) {
       console.error('Error loading transactions:', error);
@@ -125,19 +125,14 @@ const Wallet: React.FC = () => {
 
     try {
       setDepositLoading(true);
-      const response = await walletService.deposit({
-        amount,
-        method: depositMethod
-      });
+      const response = await walletService.deposit(amount, depositMethod);
       
-      if (response.success) {
+      if (response) {
         toast.success('Depósito realizado com sucesso!');
         setDepositAmount('');
         loadWalletData();
         loadTransactions();
         setActiveTab('overview');
-      } else {
-        toast.error(response.message || 'Erro ao realizar depósito');
       }
     } catch (error) {
       console.error('Error making deposit:', error);
@@ -172,21 +167,18 @@ const Wallet: React.FC = () => {
 
     try {
       setWithdrawLoading(true);
-      const response = await walletService.withdraw({
-        amount,
+      const response = await walletService.withdraw(amount, {
         method: withdrawMethod,
         pixKey: withdrawMethod === 'pix' ? pixKey : undefined
       });
       
-      if (response.success) {
+      if (response) {
         toast.success('Solicitação de saque enviada com sucesso!');
         setWithdrawAmount('');
         setPixKey('');
         loadWalletData();
         loadTransactions();
         setActiveTab('overview');
-      } else {
-        toast.error(response.message || 'Erro ao solicitar saque');
       }
     } catch (error) {
       console.error('Error making withdrawal:', error);
@@ -223,13 +215,13 @@ const Wallet: React.FC = () => {
 
   const getTransactionIcon = (type: string) => {
     switch (type) {
-      case 'deposit':
+      case 'deposito':
         return <TrendingUp className="text-green-600 dark:text-green-400" size={20} />;
-      case 'withdrawal':
+      case 'retirada':
         return <TrendingDown className="text-red-600 dark:text-red-400" size={20} />;
-      case 'bet':
+      case 'aposta':
         return <DollarSign className="text-blue-600 dark:text-blue-400" size={20} />;
-      case 'prize':
+      case 'premio':
         return <TrendingUp className="text-purple-600 dark:text-purple-400" size={20} />;
       default:
         return <DollarSign className="text-gray-600 dark:text-gray-400" size={20} />;
@@ -238,11 +230,11 @@ const Wallet: React.FC = () => {
 
   const getTransactionColor = (type: string) => {
     switch (type) {
-      case 'deposit':
-      case 'prize':
+      case 'deposito':
+      case 'premio':
         return 'text-green-600 dark:text-green-400';
-      case 'withdrawal':
-      case 'bet':
+      case 'retirada':
+      case 'aposta':
         return 'text-red-600 dark:text-red-400';
       default:
         return 'text-gray-600 dark:text-gray-400';
@@ -336,7 +328,7 @@ const Wallet: React.FC = () => {
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-              {formatCurrency(stats.totalPrizes)}
+              {formatCurrency(stats.totalWinnings)}
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">Prêmios</div>
           </div>
@@ -625,16 +617,16 @@ const Wallet: React.FC = () => {
                 </div>
                 <div className="text-right">
                   <div className={`font-medium ${getTransactionColor(transaction.type)}`}>
-                    {(transaction.type === 'withdrawal' || transaction.type === 'bet') ? '-' : '+'}
+                    {(transaction.type === 'retirada' || transaction.type === 'aposta') ? '-' : '+'}
                     {formatCurrency(Math.abs(transaction.amount))}
                   </div>
                   <div className={`text-xs px-2 py-1 rounded-full ${
-                    transaction.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' :
-                    transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' :
+                    transaction.status === 'aprovado' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' :
+                    transaction.status === 'pendente' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' :
                     'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
                   }`}>
-                    {transaction.status === 'completed' ? 'Concluída' :
-                     transaction.status === 'pending' ? 'Pendente' : 'Cancelada'}
+                    {transaction.status === 'aprovado' ? 'Concluída' :
+                     transaction.status === 'pendente' ? 'Pendente' : 'Cancelada'}
                   </div>
                 </div>
               </div>

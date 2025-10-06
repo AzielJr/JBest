@@ -216,10 +216,10 @@ const Home: React.FC = () => {
                 </p>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-500 dark:text-gray-400">
-                    {modality.numbers} números
+                    {modality.minNumbers === modality.maxNumbers ? modality.minNumbers : `${modality.minNumbers}-${modality.maxNumbers}`} números
                   </span>
                   <span className="text-green-600 dark:text-green-400 font-semibold">
-                    Até {modality.maxPrize}x
+                    Até {modality.multiplicador}x
                   </span>
                 </div>
               </div>

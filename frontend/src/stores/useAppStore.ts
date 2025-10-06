@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { User, Wallet, Draw, Bet, Notification, Theme, LoginCredentials } from '../types';
+import { User, Wallet, Draw, Bet, Notification, Theme, LoginCredentials, AuthResponse } from '../types';
 import { STORAGE_KEYS } from '../types/constants';
 import { authService } from '../services/authService';
 import { walletService } from '../services/walletService';
@@ -25,8 +25,8 @@ interface AppState {
   notifications: Notification[];
   
   // Auth Actions
-  login: (credentials: LoginCredentials) => Promise<void>;
-  register: (userData: any) => Promise<void>;
+  login: (credentials: LoginCredentials) => Promise<AuthResponse>;
+  register: (userData: any) => Promise<AuthResponse>;
   logout: () => void;
   setUser: (user: User | null) => void;
   

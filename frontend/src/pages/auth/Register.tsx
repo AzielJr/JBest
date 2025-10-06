@@ -26,7 +26,7 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
-  const { login, setLoading } = useAppStore();
+  const { register: registerUser, setLoading } = useAppStore();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,18 +44,18 @@ const Register: React.FC = () => {
     try {
       setIsSubmitting(true);
       
-      const result = await register({
+      const result = await registerUser({
         name: data.name,
         email: data.email,
         phone: data.phone,
         password: data.password
       });
       
-      if (result.success && result.user) {
+      if (result && result.user) {
         toast.success('Conta criada com sucesso!');
         navigate(ROUTES.DASHBOARD);
       } else {
-        throw new Error(result.message || 'Erro ao criar conta');
+        throw new Error('Erro ao criar conta');
       }
     } catch (error: any) {
       console.error('Register error:', error);
@@ -88,14 +88,14 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-4 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-6">
         {/* Header */}
         <div className="text-center">
           <div className="mx-auto h-12 w-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
             <span className="text-white font-bold text-xl">J</span>
           </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
+          <h2 className="mt-6 text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
             Criar nova conta
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
@@ -110,7 +110,7 @@ const Register: React.FC = () => {
         </div>
 
         {/* Form */}
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+        <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
             {/* Name */}
             <div>
@@ -126,7 +126,7 @@ const Register: React.FC = () => {
                   type="text"
                   autoComplete="name"
                   className={`
-                    block w-full pl-10 pr-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                    block w-full pl-10 pr-3 py-2.5 sm:py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base
                     ${errors.name 
                       ? 'border-red-300 dark:border-red-600' 
                       : 'border-gray-300 dark:border-gray-600'
@@ -157,7 +157,7 @@ const Register: React.FC = () => {
                   type="email"
                   autoComplete="email"
                   className={`
-                    block w-full pl-10 pr-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                    block w-full pl-10 pr-3 py-2.5 sm:py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base
                     ${errors.email 
                       ? 'border-red-300 dark:border-red-600' 
                       : 'border-gray-300 dark:border-gray-600'
@@ -188,7 +188,7 @@ const Register: React.FC = () => {
                   type="tel"
                   autoComplete="tel"
                   className={`
-                    block w-full pl-10 pr-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                    block w-full pl-10 pr-3 py-2.5 sm:py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base
                     ${errors.phone 
                       ? 'border-red-300 dark:border-red-600' 
                       : 'border-gray-300 dark:border-gray-600'
@@ -222,7 +222,7 @@ const Register: React.FC = () => {
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="new-password"
                   className={`
-                    block w-full pl-10 pr-10 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                    block w-full pl-10 pr-10 py-2.5 sm:py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base
                     ${errors.password 
                       ? 'border-red-300 dark:border-red-600' 
                       : 'border-gray-300 dark:border-gray-600'
@@ -264,7 +264,7 @@ const Register: React.FC = () => {
                   type={showConfirmPassword ? 'text' : 'password'}
                   autoComplete="new-password"
                   className={`
-                    block w-full pl-10 pr-10 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                    block w-full pl-10 pr-10 py-2.5 sm:py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base
                     ${errors.confirmPassword 
                       ? 'border-red-300 dark:border-red-600' 
                       : 'border-gray-300 dark:border-gray-600'
@@ -334,7 +334,7 @@ const Register: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+              className="group relative w-full flex justify-center py-2.5 sm:py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
             >
               {isSubmitting ? (
                 <>

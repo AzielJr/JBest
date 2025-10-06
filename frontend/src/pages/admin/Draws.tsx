@@ -237,10 +237,10 @@ const Draws: React.FC = () => {
     if (!modalityConfig) return [];
     
     const numbers: number[] = [];
-    for (let i = 0; i < modalityConfig.numbersCount; i++) {
+    for (let i = 0; i < modalityConfig.maxNumbers; i++) {
       let num;
       do {
-        num = Math.floor(Math.random() * modalityConfig.maxNumber) + 1;
+        num = Math.floor(Math.random() * modalityConfig.numberRange[1]) + modalityConfig.numberRange[0];
       } while (numbers.includes(num));
       numbers.push(num);
     }
@@ -368,9 +368,9 @@ const Draws: React.FC = () => {
               className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="all">Todas as Modalidades</option>
-              {BETTING_MODALITIES.map(modality => (
-                <option key={modality.id} value={modality.id}>
-                  {modality.name}
+              {Object.entries(BETTING_MODALITIES).map(([key, modality]) => (
+                <option key={key} value={key}>
+                  {modality.displayName}
                 </option>
               ))}
             </select>

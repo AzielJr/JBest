@@ -8,7 +8,7 @@ interface MainLayoutProps {
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
-  const { loading } = useAppStore();
+  const { isLoading } = useAppStore();
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -24,7 +24,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
         {/* Page content - Add top padding to account for fixed header */}
         <main className="pt-16 p-6">
-          {loading ? (
+          {isLoading ? (
             <div className="flex items-center justify-center h-64">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
             </div>

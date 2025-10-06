@@ -136,12 +136,12 @@ const Settings: React.FC = () => {
           maxBetsPerUser: 50,
           drawFrequency: 60,
           resultDelay: 5,
-          modalitySettings: BETTING_MODALITIES.map(modality => ({
-            id: modality.id,
+          modalitySettings: Object.entries(BETTING_MODALITIES).map(([key, modality]) => ({
+            id: key,
             enabled: true,
             minBet: 2.00,
             maxBet: 500.00,
-            payoutMultiplier: modality.multiplier,
+            payoutMultiplier: modality.multiplicador,
             maxWinAmount: 50000.00
           }))
         },
@@ -378,21 +378,22 @@ const Settings: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
-              <SettingsIcon className="mr-3 text-blue-600 dark:text-blue-400" size={28} />
-              Configurações do Sistema
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+              <SettingsIcon className="mr-2 sm:mr-3 text-blue-600 dark:text-blue-400" size={24} />
+              <span className="hidden sm:inline">Configurações do Sistema</span>
+              <span className="sm:hidden">Configurações</span>
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
+            <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm sm:text-base">
               Gerencie todas as configurações da plataforma
             </p>
           </div>
           
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 sm:space-x-3 w-full sm:w-auto">
             <input
               type="file"
               accept=".json"
@@ -402,29 +403,29 @@ const Settings: React.FC = () => {
             />
             <label
               htmlFor="import-settings"
-              className="flex items-center space-x-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer"
+              className="flex items-center justify-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer text-sm flex-1 sm:flex-none"
             >
-              <Upload size={16} />
-              <span>Importar</span>
+              <Upload size={14} />
+              <span className="hidden sm:inline">Importar</span>
             </label>
             
             <button
               onClick={exportSettings}
-              className="flex items-center space-x-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              className="flex items-center justify-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm flex-1 sm:flex-none"
             >
-              <Download size={16} />
-              <span>Exportar</span>
+              <Download size={14} />
+              <span className="hidden sm:inline">Exportar</span>
             </button>
             
             <button
               onClick={saveSettings}
               disabled={saving}
-              className="flex items-center space-x-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center justify-center space-x-1 sm:space-x-2 px-4 sm:px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm flex-1 sm:flex-none"
             >
               {saving ? (
-                <RefreshCw size={16} className="animate-spin" />
+                <RefreshCw size={14} className="animate-spin" />
               ) : (
-                <Save size={16} />
+                <Save size={14} />
               )}
               <span>{saving ? 'Salvando...' : 'Salvar'}</span>
             </button>
@@ -432,7 +433,7 @@ const Settings: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
         {/* Sidebar */}
         <div className="lg:col-span-1">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
@@ -443,7 +444,7 @@ const Settings: React.FC = () => {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as SettingsTab)}
-                    className={`w-full flex items-center px-4 py-3 text-left transition-colors ${
+                    className={`w-full flex items-center px-3 sm:px-4 py-2 sm:py-3 text-left transition-colors text-sm sm:text-base ${
                       activeTab === tab.id
                         ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-r-2 border-blue-600 dark:border-blue-400'
                         : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'

@@ -1,10 +1,14 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 import { ApiResponse } from '../types';
 import { STORAGE_KEYS } from '../types/constants';
+import { mockService } from './mockService';
+
+// Check if we're in demo mode
+const isDemoMode = import.meta.env.VITE_API_BASE_URL === 'demo' || import.meta.env.VITE_DEMO_MODE === 'true';
 
 // Create axios instance with base configuration
 const api: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001',
+  baseURL: isDemoMode ? 'http://demo-api' : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'),
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -80,39 +84,59 @@ api.interceptors.response.use(
 // Generic API methods
 export const apiClient = {
   get: async <T = any>(url: string, params?: any): Promise<AxiosResponse<ApiResponse<T>>> => {
-    try {
-      const response = await api.get(url, { params });
-      return response;
-    } catch (error: any) {
-      throw error;
+    // Handle demo mode
+    if (isDemoMode) {
+      console.log('Demo mode - intercepting GET request:', url);
+      
+      if (url.includes('/admin/dashboard')) {
+        return mockService.getAdminDashboard() as Promise<AxiosResponse<ApiResponse<T>>>;
+      }
+      
+      if (url.includes('/auth/profile')) {
+        return mockService.getProfile() as Promise<AxiosResponse<ApiResponse<T>>>;
+      }
+      
+      if (url.includes('/wallet/balance')) {
+        return mockService.getWalletBalance() as Promise<AxiosResponse<ApiResponse<T>>>;
+      }
+      
+      throw new Error(`Demo mode: GET ${url} not implemented`);
     }
+    return api.get(url, { params });
   },
-  
+
   post: async <T = any>(url: string, data?: any): Promise<AxiosResponse<ApiResponse<T>>> => {
-    try {
-      const response = await api.post(url, data);
-      return response;
-    } catch (error: any) {
-      throw error;
+    // Handle demo mode for specific endpoints
+    if (isDemoMode) {
+      console.log('Demo mode - intercepting POST request:', url, data);
+      
+      if (url.includes('/auth/login')) {
+        return mockService.login(data) as Promise<AxiosResponse<ApiResponse<T>>>;
+      }
+      
+      if (url.includes('/auth/register')) {
+        return mockService.register(data) as Promise<AxiosResponse<ApiResponse<T>>>;
+      }
+      
+      throw new Error(`Demo mode: POST ${url} not implemented`);
     }
+    return api.post(url, data);
   },
-  
+
   put: async <T = any>(url: string, data?: any): Promise<AxiosResponse<ApiResponse<T>>> => {
-    try {
-      const response = await api.put(url, data);
-      return response;
-    } catch (error: any) {
-      throw error;
+    if (isDemoMode) {
+      console.log('Demo mode - intercepting PUT request:', url);
+      throw new Error('Demo mode: PUT requests not implemented');
     }
+    return api.put(url, data);
   },
-  
+
   delete: async <T = any>(url: string): Promise<AxiosResponse<ApiResponse<T>>> => {
-    try {
-      const response = await api.delete(url);
-      return response;
-    } catch (error: any) {
-      throw error;
+    if (isDemoMode) {
+      console.log('Demo mode - intercepting DELETE request:', url);
+      throw new Error('Demo mode: DELETE requests not implemented');
     }
+    return api.delete(url);
   }
 };
 

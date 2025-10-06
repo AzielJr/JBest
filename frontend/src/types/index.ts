@@ -5,6 +5,17 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  phone?: string;
+  birthDate?: string;
+  address?: {
+    street?: string;
+    number?: string;
+    complement?: string;
+    neighborhood?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+  };
   role: 'jogador' | 'admin' | 'operador';
   isAuthenticated: boolean;
   createdAt: string;
@@ -54,6 +65,8 @@ export interface Bet {
   status: 'ativa' | 'vencedora' | 'perdedora' | 'cancelada';
   premio?: number;
   createdAt: string;
+  numerosVencedores?: number[];
+  drawDate?: string;
 }
 
 export interface BetRequest {
@@ -66,6 +79,8 @@ export interface BetRequest {
 // Draw related types
 export interface Draw {
   id: string;
+  modalidade: BettingModality;
+  numeroSorteio: number;
   dataExtracao: string;
   horarioLimite: string;
   status: 'aberta' | 'fechada' | 'apurada';
